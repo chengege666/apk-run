@@ -9,6 +9,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
     strategy:
       fail-fast: false
       matrix:
@@ -21,6 +24,47 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Delete previous workflow runs & artifacts
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const branch = context.ref.replace('refs/heads/', '').replace('refs/tags/', '');
+            console.log(`Cleaning old runs for ${owner}/${repo} on ${branch}...`);
+
+            // 获取当前工作流的 ID
+            const { data: runs } = await github.rest.actions.listWorkflowRuns({
+              owner, repo,
+              workflow_id: context.workflow,
+              branch,
+              status: 'completed',
+              per_page: 50
+            });
+
+            for (const run of runs.workflow_runs) {
+              if (run.id >= context.runId) continue;
+              console.log(`Deleting run #${run.id} (${run.status}, ${run.conclusion})`);
+              try {
+                // 先删 artifacts
+                const { data: artifacts } = await github.rest.actions.listWorkflowRunArtifacts({
+                  owner, repo, run_id: run.id
+                });
+                for (const art of artifacts.artifacts) {
+                  await github.rest.actions.deleteArtifact({
+                    owner, repo, artifact_id: art.id
+                  });
+                  console.log(`  deleted artifact: ${art.name}`);
+                }
+                // 删 run
+                await github.rest.actions.deleteWorkflowRun({
+                  owner, repo, run_id: run.id
+                });
+              } catch (e) {
+                console.log(`  skip run #${run.id}: ${e.message}`);
+              }
+            }
 
       - name: Install deps
         run: |
