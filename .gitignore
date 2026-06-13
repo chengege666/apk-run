@@ -1,0 +1,5 @@
+.github/
+luci-app-run/.DS_Store
+*.swp
+*.swo
+*~
