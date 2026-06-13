@@ -98,7 +98,7 @@ jobs:
       - name: Collect packages
         run: |
           mkdir -p dist
-          find sdk/bin -type f \( -name "*.ipk" -o -name "*.apk" \) -exec cp -v {} dist/ \;
+          find sdk/bin -type f \( -name "luci-app-run*.ipk" -o -name "luci-app-run*.apk" \) -exec cp -v {} dist/ \;
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
