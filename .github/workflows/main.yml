@@ -1,5 +1,6 @@
 name: Build & Release
-run-name: luci-app-run ${{ github.ref_name }}
+run-name: >-
+  luci-app-run${{ github.ref_type == 'tag' && format(' {0}', github.ref_name) || '' }}
 
 on:
   workflow_dispatch:
