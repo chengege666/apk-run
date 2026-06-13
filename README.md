@@ -35,7 +35,7 @@ make package/luci-app-run/compile V=s
 bash <(curl -sL https://lj.1231818.xyz/kg)
 ```
 
-### 21.x ~ 24.10
+### 24.10.x
 
 系统→软件包 上传 ipk 直接装。
 
