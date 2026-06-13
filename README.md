@@ -45,3 +45,6 @@ bash <(curl -sL https://lj.1231818.xyz/kg)
 - 最大 256 MiB
 - 一次只能跑一个
 - 文件放 `/tmp/`，重启就没了
+
+## Run仓库
+地址https://github.com/chengege666/openwrt-run-apk25
